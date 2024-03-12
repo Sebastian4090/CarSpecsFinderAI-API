@@ -1,11 +1,14 @@
-import mongoose from "mongoose";
+import { Db, MongoClient } from "mongodb";
 import log from "./logger";
 
-const connect = () => {
+let dbConnection: Db;
+
+const connectDB = () => {
     const dbURI = String(process.env.MONGO_URL);
 
-    return mongoose.connect(dbURI)
-    .then(() => {
+    return MongoClient.connect(dbURI)
+    .then((client) => {
+        dbConnection = client.db(process.env.DB_NAME);
         log.info("MongoDB connected!");
     })
     .catch((err) => {
@@ -14,4 +17,6 @@ const connect = () => {
     })
 }
 
-export default connect;
+const getDB = () => dbConnection;
+
+export {connectDB, getDB};
