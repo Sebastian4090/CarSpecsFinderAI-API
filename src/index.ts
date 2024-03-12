@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import compression from 'compression';
 
 import routes from './routes';
-import connect from './utils/connect';
+import { connectDB } from './utils/connect';
 import log from './utils/logger';
 
 dotenv.config();
@@ -21,10 +21,12 @@ app.get('/', (req, res) => {
     res.json("success");
 })
 
+
 app.listen(PORT, async () => {
     log.info(`Server is listening on port ${PORT}`);
 
+    // database connection
+    await connectDB();
 
-    await connect();
     routes(app);
 })
