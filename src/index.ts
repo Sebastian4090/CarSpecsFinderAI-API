@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
     res.json("success");
 })
 
-
 app.listen(PORT, async () => {
     log.info(`Server is listening on port ${PORT}`);
 
