@@ -2,6 +2,7 @@ import express, { Express, urlencoded } from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import compression from 'compression';
+import cors from 'cors';
 
 import routes from './routes';
 import { connectDB } from './utils/connect';
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(urlencoded({ extended: false }))
 app.use(morgan('combined'));
 app.use(compression());
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.json("success");

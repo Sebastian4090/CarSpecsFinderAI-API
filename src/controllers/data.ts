@@ -22,13 +22,15 @@ const handleFetch = async (req: Request, res: Response): Promise<object> => {
 
 const handleData = (req: Request, res: Response, data: object) => {
     for (const [key, value] of Object.entries(data)) {
-      if (key === req.body.type) {
+      if (key === req.params.type) {
           return value;
       }
     }
 }
 
-const handleDataGet = (req: Request<{id? : string}>, res: Response) => {
+const handleDataGet = (req: Request<{id? : string, type? : string}>, res: Response) => {
+  console.log(req.params.type);
+
   handleFetch(req, res)
   .then(rawData => {
     return rawData ? handleData(req, res, rawData) : Promise.reject();
