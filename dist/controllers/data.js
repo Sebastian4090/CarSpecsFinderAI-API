@@ -35,42 +35,48 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var express_2 = __importDefault(require("express"));
-var router = express_2.default.Router();
+var connect_1 = require("../utils/connect");
+var mongodb_1 = require("mongodb");
+require("../config");
+var DB_COLLECTION = process.env.DB_COLLECTION;
 var handleFetch = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch("https://gist.github.com/Sebastian4090/dc8eb32f4043a086d1ab2054cd53bf25.js")];
-            case 1:
-                data = _a.sent();
-                console.log(data);
-                return [2 /*return*/, data];
-        }
+        return [2 /*return*/, new Promise(function (resolve, reject) {
+                var data = (0, connect_1.getDB)();
+                data
+                    .collection(DB_COLLECTION)
+                    .findOne({ _id: new mongodb_1.ObjectId(req.params.id) })
+                    .then(function (doc) {
+                    if (doc !== null) {
+                        resolve(doc);
+                    }
+                    else {
+                        reject("Unable to fetch data");
+                    }
+                })
+                    .catch(function (err) {
+                    reject("Unable to fetch data");
+                });
+            })];
     });
 }); };
-var sortData = function (data, id) {
-    var dataList = [];
-    console.log(data);
-    for (var key in data) {
-        dataList.push([key]);
+var handleData = function (req, res, data) {
+    for (var _i = 0, _a = Object.entries(data); _i < _a.length; _i++) {
+        var _b = _a[_i], key = _b[0], value = _b[1];
+        if (key === req.params.type) {
+            return value;
+        }
     }
 };
 var handleDataGet = function (req, res) {
-    var id = express_1.request.params;
-    console.log(express_1.request.params);
-    return handleFetch(req, res)
-        .then(function (data) {
-        console.log(data);
-        return data ? sortData(data, id) : Promise.reject(data);
-    });
+    console.log(req.params.type);
+    handleFetch(req, res)
+        .then(function (rawData) {
+        return rawData ? handleData(req, res, rawData) : Promise.reject();
+    })
+        .then(function (readyData) { return res.status(200).json(readyData); })
+        .catch(function (err) { return res.status(500).json("Can't get data"); });
 };
-exports.default = (function () {
-    return router;
-});
+exports.default = handleDataGet;
 //# sourceMappingURL=data.js.map
