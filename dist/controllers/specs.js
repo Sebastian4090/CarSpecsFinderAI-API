@@ -52,7 +52,19 @@ var openai_1 = __importDefault(require("openai"));
 require("../config");
 var OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 var OPENAI_MODEL = process.env.OPENAI_MODEL;
-var systemPrompt = "\n\n  Rules:\n  - Return data in a json format \n  - Don't generate nested json\n  - Don't generate arrays inside json\n  - Always return complex data not only the general one \n\n  User: \"Give me engine specifications of BMW E30 (1982-1994) 2.0\"\n  Assistant:\n  Engine Code: M20B20\n  Horsepower: 127 HP @ 6000rpm\n  Maximum torque: 174 NM @ 4000rpm\n  Displacement: 2.0 liters (1990 cc)\n  Configuration: Inline-6\n  Fuel Type: Petrol (Gasoline)\n  Fuel System: gasoline indirect injection\n  Aspiration: Naturally aspirated\n  Bore: 80mm\n  Stroke: 66mm\n  Compression ratio: 9.8\n  Valve Train: Single Overhead Camshaft\n  Valves per cylinder: 2\n  Engine block material: Cast iron\n  Cylinder head material: Aluminium\n\n  User: \"Give me common problems with Volkswagen Golf Fourth generation (1997\u20132006) 1.6\"\n  Assistant:\n  Electrical problems: This includes issues with various electrical components such as power windows, central locking system, interior lights, and dashboard electronics.\n  Engine Oil Leaks: Oil leaks, particularly from the valve cover gasket and camshaft seals.\n  Cooling System Faults: Coolant leaks, often from the radiator, water pump, or hoses.\n  Exhaust System Rust: Rust can develop in the exhaust system, particularly in regions with harsh climates or road salt usage.\n  Interior Trim Wear and Tear: Interior trim components, including door handles, trim panels, and cup holders, may degrade over time\n  Electrical Wiring Harness Issues: Wiring harness problems, including damaged or corroded wiring.\n";
+var systemPrompt = "\n\n  Rules:\n  - Provide valid JSON output\n  - Don't generate arrays inside JSON\n  - Always return complex data not only the general one \n  - If a car has forced induction, give stock boost pressure (in bar), if it's not type \"Not applicable\"\n  - If you can't give a stock boost pressure (and a car has forced induction) due to not having that information type \"Unknown\"\n\n  User: \"Give me engine specifications of BMW E30 (1982-1994) 2.0\"\n  Assistant:\n  {\n    \"Engine Code\": \"M20B20\",\n    \"Horsepower\": \"127 HP @ 6000rpm\",\n    \"Maximum torque\": \"174 NM @ 4000rpm\",\n    \"Displacement\": \"2.0 liters (1990 cc)\",\n    \"Configuration\": \"Inline-6\",\n    \"Recommended oil\": \"5W-40 Synthetic\"\n    \"Fuel Type\": \"Petrol (Gasoline)\",\n    \"Fuel System\": \"Gasoline indirect injection\",\n    \"Aspiration\": \"Naturally aspirated\",\n    \"Stock boost pressure\": \"Not applicable\",\n    \"Bore\": \"80mm\",\n    \"Stroke\": \"66mm\",\n    \"Compression ratio\": \"9.8\",\n    \"Valve Train\": \"Single Overhead Camshaft\",\n    \"Valves per cylinder\": \"2\",\n    \"Engine block material\": \"Cast iron\",\n    \"Cylinder head material\": \"Aluminium\"\n  }\n  \n\n  User: \"Give me common problems with Volkswagen Golf Fourth generation (1997\u20132006) 1.6\"\n  Assistant:\n  {\n    \"Electrical problems\":\n      \"This includes issues with various electrical components such as power windows, central locking system, interior lights, and dashboard electronics.\",\n    \"Engine Oil Leaks\":\n      \"Oil leaks, particularly from the valve cover gasket and camshaft seals.\",\n    \"Cooling System Faults\":\n      \"Coolant leaks, often from the radiator, water pump, or hoses.\",\n    \"Exhaust System Rust\":\n      \"Rust can develop in the exhaust system, particularly in regions with harsh climates or road salt usage.\",\n    \"Interior Trim Wear and Tear\":\n      \"Interior trim components, including door handles, trim panels, and cup holders, may degrade over time\",\n    \"Electrical Wiring Harness Issues\":\n      \"Wiring harness problems, including damaged or corroded wiring.\",\n  }\n\n  User: \"Give me transmission specifications of Audi A3 8L (1996-2003) 1.6\"\n  Assistant:\n  {\n    \"Transmission Type\": \"5-speed manual\",\n    \"Final Drive Ratio\": \"4.105\",\n    \"First gear\": \"3.778\",\n    \"Second gear\": \"2.118\",\n    \"Third gear\": \"1.360\",\n    \"Fourth gear\": \"0.971\",\n    \"Fifth gear\": \"0.756\",\n    \"Reverse gear\": \"3.333\",\n    \"Clutch Type\": \"Single dry plate clutch\",\n    \"Drive Type\": \"Front-wheel drive\"\n\n  }\n\n  User: \"Give me fuel consumption of Audi A3 8L (1996-2003) 1.6\"\n  Assistant: \n  {\n    \"City\": \"9.6L/100km\",\n    \"Highway\": \"5.3L/100km\",\n    \"Combined\": \"6.8L/100km\"\n    \n  }\n";
+var extractJson = function (content) {
+    var regex = /\{(?:[^{}]|{[^{}]*})*\}/g;
+    var match = content.match(regex);
+    if (match) {
+        return match[0].replace(/"([^"]*)"/g, function (match) {
+            return match.replace(/\n/g, "\\n");
+        });
+    }
+    else {
+        return "";
+    }
+};
 var callOpenAI = function (userPrompt_1) {
     var args_1 = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -69,7 +81,7 @@ var callOpenAI = function (userPrompt_1) {
                     openai = new openai_1.default({ apiKey: OPENAI_API_KEY });
                     return [4 /*yield*/, openai.chat.completions.create({
                             model: OPENAI_MODEL,
-                            max_tokens: 512,
+                            max_tokens: 1024,
                             temperature: temperature,
                             messages: [
                                 { role: "system", content: systemPrompt },
@@ -81,6 +93,12 @@ var callOpenAI = function (userPrompt_1) {
                     completion = _e.sent();
                     content = (_d = (_c = (_b = (_a = completion.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) !== null && _d !== void 0 ? _d : "";
                     console.log("OpenAI output: \n", content);
+                    console.log("OpenAI type", typeof content);
+                    if (content && content.includes("{") && content.includes("}")) {
+                        content = extractJson(content);
+                    }
+                    console.log("After parse: \n", content);
+                    console.log("type after parse ", typeof content);
                     return [2 /*return*/, content];
                 case 2:
                     e_1 = _e.sent();
@@ -92,26 +110,28 @@ var callOpenAI = function (userPrompt_1) {
     });
 };
 var handleSpecsPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, car, userPrompt, result, e_2;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var userPrompt, result, e_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _a = req.body, car = _a.car, userPrompt = _a.userPrompt;
-                if (!car || !userPrompt) {
+                userPrompt = req.body.userPrompt;
+                console.log(userPrompt);
+                if (!userPrompt) {
                     return [2 /*return*/, res.status(400).json({
                             status: false,
                             error: "Can't post specifications",
                         })];
                 }
-                _b.label = 1;
+                _a.label = 1;
             case 1:
-                _b.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, callOpenAI(userPrompt)];
             case 2:
-                result = _b.sent();
+                result = _a.sent();
+                console.log("after assign", result);
                 return [3 /*break*/, 4];
             case 3:
-                e_2 = _b.sent();
+                e_2 = _a.sent();
                 console.error("Error parsing JSON", e_2);
                 return [3 /*break*/, 4];
             case 4:
