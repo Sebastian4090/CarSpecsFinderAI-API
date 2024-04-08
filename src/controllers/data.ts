@@ -26,8 +26,16 @@ const handleFetch = async (req: Request, res: Response): Promise<object> => {
 };
 
 const handleData = (req: Request, res: Response, data: object) => {
+  let type: string;
+  // refactor type to match keys
+  if (req.params.type.includes("=")) {
+    type = req.params.type.split("=").join("/");
+  } else {
+    type = req.params.type;
+  }
+
   for (const [key, value] of Object.entries(data)) {
-    if (key === req.params.type) {
+    if (key === type) {
       return value;
     }
   }
@@ -37,8 +45,6 @@ const handleDataGet = (
   req: Request<{ id?: string; type?: string }>,
   res: Response
 ) => {
-  console.log(req.params.type);
-
   handleFetch(req, res)
     .then((rawData) => {
       return rawData ? handleData(req, res, rawData) : Promise.reject();
