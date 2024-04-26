@@ -21,7 +21,6 @@ const handleImageGet = async (req: Request<{ car: string }>, res: Response) => {
         res.status(200).json(response.images_results[0].original);
       }
     );
-
     // res
     //   .status(200)
     //   .json(
@@ -29,6 +28,7 @@ const handleImageGet = async (req: Request<{ car: string }>, res: Response) => {
     //   );
   } catch (error) {
     console.error("Error fetching data:", error);
+    res.status(500).json("Error fetching data");
     throw error;
   }
 };

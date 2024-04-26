@@ -130,7 +130,6 @@ const callOpenAI = async (
 
 const handleSpecsPost = async (req: Request, res: Response) => {
   const { userPrompt } = req.body;
-  console.log(userPrompt);
 
   if (!userPrompt) {
     return res.status(400).json({
@@ -145,7 +144,10 @@ const handleSpecsPost = async (req: Request, res: Response) => {
     console.log("after assign", result);
   } catch (e: unknown) {
     console.error("Error parsing JSON", e);
+    res.json('"Error"');
   }
+
+  console.log(result);
 
   res.json(result);
 };
