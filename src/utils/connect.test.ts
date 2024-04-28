@@ -1,4 +1,4 @@
-import { connectDB, getDB } from "./connect"; // Update this with the correct path to your module
+import { connectDB, getDB } from "./connect";
 import { MongoClient, Db } from "mongodb";
 
 jest.mock("mongodb");
@@ -27,15 +27,14 @@ describe("connectDB function", () => {
     (MongoClient.connect as jest.Mock).mockRejectedValue(mockError);
     const consoleErrorSpy = jest
       .spyOn(console, "error")
-      .mockImplementation(() => {}); // Mocking console.error
+      .mockImplementation(() => {});
     const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
       throw new Error("process.exit() was called");
-    }); // Mocking process.exit
-
+    });
     try {
       await connectDB();
     } catch (error) {
-      console.error("Error connecting to MongoDB!"); // Log error message
+      console.error("Error connecting to MongoDB!");
     }
 
     expect(exitSpy).toHaveBeenCalledTimes(1);
