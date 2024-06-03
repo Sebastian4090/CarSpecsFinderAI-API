@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import handleSpecsPost from "./specs";
-import OpenAI from "openai";
 
-// Mock the OpenAI module
 jest.mock("openai", () => {
   return {
     __esModule: true,
@@ -44,7 +42,7 @@ jest.mock("openai", () => {
   };
 });
 
-describe("handleSpecsPost", () => {
+describe("POST /specs", () => {
   it("should return JSON response from OpenAI", async () => {
     const req = {
       body: {
