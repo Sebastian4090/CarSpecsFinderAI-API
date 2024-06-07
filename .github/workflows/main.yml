@@ -16,7 +16,7 @@ jobs:
       mongo:
         image: mongo:latest
         ports:
-          - 27018:27017
+          - 27023:27017
 
     steps:
       - name: Checkout repository
