@@ -1,4 +1,5 @@
 name: Docker CI
+
 on:
   push:
     branches:
@@ -35,6 +36,8 @@ jobs:
 
       - name: Run tests
         env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          DB_NAME: ${{ secrets.DB_NAME }}
           IMAGE_API_KEY: ${{ secrets.IMAGE_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
