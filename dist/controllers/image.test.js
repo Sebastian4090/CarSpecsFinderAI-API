@@ -35,38 +35,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var serpapi_1 = require("serpapi");
-require("../config");
-var IMAGE_API_KEY = process.env.IMAGE_API_KEY;
-var handleImageGet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        try {
-            (0, serpapi_1.getJson)({
-                engine: "google_images",
-                google_domain: "google.com",
-                q: "".concat(req.params.car, " wikipedia"),
-                gl: "pl",
-                safe: "active",
-                ijn: "0.1",
-                tbs: "car",
-                api_key: IMAGE_API_KEY,
-            }, function (response) {
-                res.status(200).json(response.images_results[0].original);
-            });
-            // res
-            //   .status(200)
-            //   .json(
-            //     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/1997_Audi_A3_1.6_Front.jpg/240px-1997_Audi_A3_1.6_Front.jpg"
-            //   );
-        }
-        catch (error) {
-            console.error("Error fetching data:", error);
-            res.status(500).json("Error fetching data");
-            throw error;
-        }
-        return [2 /*return*/];
-    });
-}); };
-exports.default = handleImageGet;
-//# sourceMappingURL=image.js.map
+var supertest_1 = __importDefault(require("supertest"));
+var express_1 = __importDefault(require("express"));
+var image_1 = __importDefault(require("./image"));
+var app = (0, express_1.default)();
+app.get("/image/:car", image_1.default);
+jest.mock("serpapi", function () { return ({
+    getJson: jest.fn(),
+}); });
+describe("GET /image/:car", function () {
+    it("responds with JSON containing the image URL", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var car, expectedURL, res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    car = "test_car";
+                    expectedURL = "test_URL";
+                    require("serpapi").getJson.mockImplementation(function (options, callback) {
+                        var response = {
+                            images_results: [
+                                {
+                                    original: expectedURL,
+                                },
+                            ],
+                        };
+                        callback(response);
+                    });
+                    return [4 /*yield*/, (0, supertest_1.default)(app).get("/image/".concat(car))];
+                case 1:
+                    res = _a.sent();
+                    expect(res.status).toEqual(200);
+                    expect(res.body).toEqual(expectedURL);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+//# sourceMappingURL=image.test.js.map

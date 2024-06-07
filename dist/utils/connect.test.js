@@ -36,37 +36,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var serpapi_1 = require("serpapi");
-require("../config");
-var IMAGE_API_KEY = process.env.IMAGE_API_KEY;
-var handleImageGet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        try {
-            (0, serpapi_1.getJson)({
-                engine: "google_images",
-                google_domain: "google.com",
-                q: "".concat(req.params.car, " wikipedia"),
-                gl: "pl",
-                safe: "active",
-                ijn: "0.1",
-                tbs: "car",
-                api_key: IMAGE_API_KEY,
-            }, function (response) {
-                res.status(200).json(response.images_results[0].original);
-            });
-            // res
-            //   .status(200)
-            //   .json(
-            //     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/1997_Audi_A3_1.6_Front.jpg/240px-1997_Audi_A3_1.6_Front.jpg"
-            //   );
-        }
-        catch (error) {
-            console.error("Error fetching data:", error);
-            res.status(500).json("Error fetching data");
-            throw error;
-        }
-        return [2 /*return*/];
+var connect_1 = require("./connect");
+var mongodb_1 = require("mongodb");
+jest.mock("mongodb");
+describe("connectDB function", function () {
+    var mockDbInstance;
+    beforeEach(function () {
+        mockDbInstance = {};
+        mongodb_1.MongoClient.connect.mockResolvedValue({
+            db: jest.fn().mockReturnValue(mockDbInstance),
+        });
     });
-}); };
-exports.default = handleImageGet;
-//# sourceMappingURL=image.js.map
+    it("should connect to MongoDB and set dbConnection on success", function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, connect_1.connectDB)()];
+                case 1:
+                    _a.sent();
+                    expect(mongodb_1.MongoClient.connect).toHaveBeenCalledWith(process.env.MONGO_URL);
+                    expect((0, connect_1.getDB)()).toBe(mockDbInstance);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it("should log error and exit process on connection failure", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var mockError, consoleErrorSpy, exitSpy, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    mockError = new Error("Connection failed");
+                    mongodb_1.MongoClient.connect.mockRejectedValue(mockError);
+                    consoleErrorSpy = jest
+                        .spyOn(console, "error")
+                        .mockImplementation(function () { });
+                    exitSpy = jest.spyOn(process, "exit").mockImplementation(function () {
+                        throw new Error("process.exit() was called");
+                    });
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, (0, connect_1.connectDB)()];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_1 = _a.sent();
+                    console.error("Error connecting to MongoDB!");
+                    return [3 /*break*/, 4];
+                case 4:
+                    expect(exitSpy).toHaveBeenCalledTimes(1);
+                    expect(consoleErrorSpy).toHaveBeenCalledWith("Error connecting to MongoDB!");
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+//# sourceMappingURL=connect.test.js.map

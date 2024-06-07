@@ -115,7 +115,6 @@ var handleSpecsPost = function (req, res) { return __awaiter(void 0, void 0, voi
         switch (_a.label) {
             case 0:
                 userPrompt = req.body.userPrompt;
-                console.log(userPrompt);
                 if (!userPrompt) {
                     return [2 /*return*/, res.status(400).json({
                             status: false,
@@ -133,8 +132,10 @@ var handleSpecsPost = function (req, res) { return __awaiter(void 0, void 0, voi
             case 3:
                 e_2 = _a.sent();
                 console.error("Error parsing JSON", e_2);
+                res.json('"Error"');
                 return [3 /*break*/, 4];
             case 4:
+                console.log(result);
                 res.json(result);
                 return [2 /*return*/];
         }
