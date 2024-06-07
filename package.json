@@ -20,7 +20,7 @@
     "express": "^4.19.2",
     "mongodb": "^6.7.0",
     "morgan": "^1.10.0",
-    "openai": "^4.47.3",
+    "openai": "^4.49.0",
     "pino": "^9.1.0",
     "pino-pretty": "^11.1.0",
     "serpapi": "^2.1.0"

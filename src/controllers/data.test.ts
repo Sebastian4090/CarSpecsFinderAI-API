@@ -2,7 +2,7 @@ import request from "supertest";
 import express from "express";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoClient, Db, ObjectId } from "mongodb";
-import handleDataGet from "./data"; // Adjust the import to your file path
+import handleDataGet from "./data";
 
 const app = express();
 app.use(express.json());
