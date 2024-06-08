@@ -32,7 +32,7 @@ jobs:
 
       - name: Run tests
         env:
-          MONGO_URL: mongodb://localhost:27017/${{ secrets.DB_NAME }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
           DB_NAME: ${{ secrets.DB_NAME }}
           IMAGE_API_KEY: ${{ secrets.IMAGE_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -50,6 +50,9 @@ jobs:
 
       - name: Build Docker image
         run: docker-compose build
+
+      - name: Run tests in Docker
+        run: docker-compose run --rm app npm test
 
       - name: Push Docker image
         run: |
