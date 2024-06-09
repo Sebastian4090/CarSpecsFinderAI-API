@@ -40,6 +40,8 @@ describe("GET /data/:id/:type", () => {
       .collection(process.env.DB_COLLECTION as string)
       .insertOne(testData);
 
+    console.log(process.env.DB_COLLECTION, "DB_COLLECTION");
+
     const res = await request(app).get(`/data/${testData._id}/type`);
 
     expect(res.status).toBe(200);

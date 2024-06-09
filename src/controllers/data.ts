@@ -9,7 +9,6 @@ const handleFetch = async (req: Request): Promise<any> => {
   const data: Db = getDB();
 
   try {
-    console.log(DB_COLLECTION, "collection name");
     const doc = await data
       .collection(DB_COLLECTION)
       .findOne({ _id: new ObjectId(req.params.id) });
