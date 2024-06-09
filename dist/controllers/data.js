@@ -40,43 +40,78 @@ var connect_1 = require("../utils/connect");
 var mongodb_1 = require("mongodb");
 require("../config");
 var DB_COLLECTION = process.env.DB_COLLECTION;
-var handleFetch = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var handleFetch = function (req) { return __awaiter(void 0, void 0, void 0, function () {
+    var data, doc, err_1;
     return __generator(this, function (_a) {
-        return [2 /*return*/, new Promise(function (resolve, reject) {
-                var data = (0, connect_1.getDB)();
-                data
-                    .collection(DB_COLLECTION)
-                    .findOne({ _id: new mongodb_1.ObjectId(req.params.id) })
-                    .then(function (doc) {
-                    if (doc !== null) {
-                        resolve(doc);
-                    }
-                    else {
-                        reject("Unable to fetch data");
-                    }
-                })
-                    .catch(function (err) {
-                    reject("Unable to fetch data");
-                });
-            })];
+        switch (_a.label) {
+            case 0:
+                data = (0, connect_1.getDB)();
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, data
+                        .collection(DB_COLLECTION)
+                        .findOne({ _id: new mongodb_1.ObjectId(req.params.id) })];
+            case 2:
+                doc = _a.sent();
+                if (doc !== null) {
+                    return [2 /*return*/, doc];
+                }
+                else {
+                    throw new Error("Data not found");
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_1 = _a.sent();
+                if (err_1 instanceof Error) {
+                    console.error("Unable to fetch data:", err_1.message);
+                }
+                throw new Error("Unable to fetch data " + err_1);
+            case 4: return [2 /*return*/];
+        }
     });
 }); };
-var handleData = function (req, res, data) {
-    for (var _i = 0, _a = Object.entries(data); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], value = _b[1];
-        if (key === req.params.type) {
-            return value;
-        }
+var handleData = function (req, data) {
+    var type;
+    if (req.params.type.includes("=")) {
+        type = req.params.type.split("=").join("/");
     }
+    else {
+        type = req.params.type;
+    }
+    return data[type] || null;
 };
-var handleDataGet = function (req, res) {
-    console.log(req.params.type);
-    handleFetch(req, res)
-        .then(function (rawData) {
-        return rawData ? handleData(req, res, rawData) : Promise.reject();
-    })
-        .then(function (readyData) { return res.status(200).json(readyData); })
-        .catch(function (err) { return res.status(500).json("Can't get data"); });
-};
+var handleDataGet = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var rawData, readyData, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, handleFetch(req)];
+            case 1:
+                rawData = _a.sent();
+                readyData = handleData(req, rawData);
+                if (readyData !== null) {
+                    res.status(200).json(readyData);
+                }
+                else {
+                    res.status(404).json("Data type not found");
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                if (err_2 instanceof Error) {
+                    console.error("Error message:", err_2.message);
+                    res.status(404).json("Data not found");
+                }
+                else {
+                    console.error("Unknown error:", err_2);
+                    res.status(500).json("Can't get data");
+                }
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 exports.default = handleDataGet;
 //# sourceMappingURL=data.js.map

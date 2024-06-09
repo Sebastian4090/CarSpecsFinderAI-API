@@ -62,6 +62,7 @@ var handleImageGet = function (req, res) { return __awaiter(void 0, void 0, void
         }
         catch (error) {
             console.error("Error fetching data:", error);
+            res.status(500).json("Error fetching data");
             throw error;
         }
         return [2 /*return*/];

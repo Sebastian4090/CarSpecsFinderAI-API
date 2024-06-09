@@ -8,7 +8,7 @@ var mongodb_1 = require("mongodb");
 var logger_1 = __importDefault(require("./logger"));
 var dbConnection;
 var connectDB = function () {
-    var dbURI = String(process.env.MONGO_URL);
+    var dbURI = process.env.MONGO_URL;
     return mongodb_1.MongoClient.connect(dbURI)
         .then(function (client) {
         dbConnection = client.db(process.env.DB_NAME);
