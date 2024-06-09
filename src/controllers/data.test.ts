@@ -13,7 +13,11 @@ let connection: MongoClient;
 let db: Db;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
+  mongoServer = await MongoMemoryServer.create({
+    binary: {
+      version: "7.0.3",
+    },
+  });
   const uri = mongoServer.getUri();
   connection = await MongoClient.connect(uri);
   db = connection.db();

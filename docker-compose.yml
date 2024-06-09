@@ -12,6 +12,7 @@ services:
       - IMAGE_API_KEY=${IMAGE_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL=${OPENAI_MODEL}
+      - DB_COLLECTION=${DB_COLLECTION}
     depends_on:
       - mongo
 
