@@ -12,8 +12,6 @@ let mongoServer: MongoMemoryServer;
 let connection: MongoClient;
 let db: Db;
 
-const DB_COLLECTION = "carData";
-
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
@@ -28,7 +26,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await db.collection(DB_COLLECTION).deleteMany({});
+  await db.collection(process.env.DB_COLLECTION as string).deleteMany({});
 });
 
 describe("GET /data/:id/:type", () => {
@@ -38,9 +36,9 @@ describe("GET /data/:id/:type", () => {
       type: "exampleType",
       value: "exampleValue",
     };
-    await db.collection(DB_COLLECTION as string).insertOne(testData);
-
-    console.log(DB_COLLECTION, "DB_COLLECTION");
+    await db
+      .collection(process.env.DB_COLLECTION as string)
+      .insertOne(testData);
 
     const res = await request(app).get(`/data/${testData._id}/type`);
 
@@ -59,7 +57,9 @@ describe("GET /data/:id/:type", () => {
 
   it('should handle the case where type string contains "="', async () => {
     const testData = { _id: new ObjectId(), "example/type": "exampleValue" };
-    await db.collection(DB_COLLECTION as string).insertOne(testData);
+    await db
+      .collection(process.env.DB_COLLECTION as string)
+      .insertOne(testData);
 
     const res = await request(app).get(`/data/${testData._id}/example=type`);
 
@@ -69,7 +69,9 @@ describe("GET /data/:id/:type", () => {
 
   it("should return a 404 error when the type is not found in the data", async () => {
     const testData = { _id: new ObjectId(), someOtherType: "someValue" };
-    await db.collection(DB_COLLECTION as string).insertOne(testData);
+    await db
+      .collection(process.env.DB_COLLECTION as string)
+      .insertOne(testData);
 
     const res = await request(app).get(`/data/${testData._id}/nonexistentType`);
 

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { getDB } from "../utils/connect";
 import { Db, ObjectId } from "mongodb";
-// import "../config";
+import "../config";
 
-const DB_COLLECTION = "carData";
+const DB_COLLECTION = process.env.DB_COLLECTION as string;
 
 const handleFetch = async (req: Request): Promise<any> => {
   const data: Db = getDB();
