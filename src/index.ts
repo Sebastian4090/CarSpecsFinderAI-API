@@ -7,6 +7,7 @@ import "./config";
 import routes from "./routes";
 import { connectDB } from "./utils/connect";
 import log from "./utils/logger";
+import keepAlive from "./keep_alive";
 
 const PORT = Number(process.env.PORT);
 
@@ -26,6 +27,8 @@ app.listen(PORT, async () => {
 
   // database connection
   await connectDB();
+
+  keepAlive();
 
   routes(app);
 });
