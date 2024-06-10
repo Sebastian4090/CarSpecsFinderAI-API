@@ -1,9 +1,9 @@
-import http from "http";
+import https from "https";
 
 const healthcheckUrl = process.env.HEALTHCHECK as string;
 
 const healthCheck = () => {
-  http
+  https
     .get(healthcheckUrl, (res) => {
       let data = "";
 
@@ -20,9 +20,9 @@ const healthCheck = () => {
     });
 };
 
-// 5min
+// 1min
 const keepAlive = () => {
-  setInterval(healthCheck, 5 * 60 * 1000);
+  setInterval(healthCheck, 1 * 60 * 1000);
 };
 
 export default keepAlive;
