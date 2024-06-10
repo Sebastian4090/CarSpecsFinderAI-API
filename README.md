@@ -1,6 +1,8 @@
 # CarSpecsFinderAI-API
 ### API made for CarSpecsFinderAI website
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Sebastian4090/CarSpecsFinderAI-API)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Ffacespotterai.onrender.com%2F)
+![Server](https://img.shields.io/website?url=https%3A%2F%2Fcarspecsfinderai-api.onrender.com&label=server)
 <br>
 ## Developed using:<br>
 [![List](https://skillicons.dev/icons?i=nodejs,express,ts,mongodb,docker,jest,)](https://skillicons.dev)<br><br>
