@@ -28,7 +28,11 @@ app.listen(PORT, async () => {
   // database connection
   await connectDB();
 
-  keepAlive();
+  if (process.env.NODE_ENV !== "dev") {
+    keepAlive();
+  } else {
+    console.log("Developer mode");
+  }
 
   routes(app);
 });
