@@ -114,4 +114,4 @@ var handleDataGet = function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.default = handleDataGet;
-//# sourceMappingURL=data.js.map
+//# sourceMappingURL=cars.js.map
