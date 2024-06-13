@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 
-import data from "./controllers/data";
-import handleImageGet from "./controllers/image";
+import data from "./controllers/cars";
+import handleImageGet from "./controllers/images";
 import handleSpecsPost from "./controllers/specs";
 
 const routes = (app: Express) => {

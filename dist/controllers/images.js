@@ -69,4 +69,4 @@ var handleImageGet = function (req, res) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.default = handleImageGet;
-//# sourceMappingURL=image.js.map
+//# sourceMappingURL=images.js.map

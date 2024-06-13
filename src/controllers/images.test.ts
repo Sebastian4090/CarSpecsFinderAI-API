@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import handleImageGet from "./image";
+import handleImageGet from "./images";
 
 const app = express();
 

@@ -70,6 +70,7 @@ require("./config");
 var routes_1 = __importDefault(require("./routes"));
 var connect_1 = require("./utils/connect");
 var logger_1 = __importDefault(require("./utils/logger"));
+var keep_alive_1 = __importDefault(require("./keep_alive"));
 var PORT = Number(process.env.PORT);
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -90,6 +91,12 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
             case 1:
                 // database connection
                 _a.sent();
+                if (process.env.NODE_ENV !== "dev") {
+                    (0, keep_alive_1.default)();
+                }
+                else {
+                    console.log("Developer mode");
+                }
                 (0, routes_1.default)(app);
                 return [2 /*return*/];
         }
