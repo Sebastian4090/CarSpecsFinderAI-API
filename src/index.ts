@@ -19,7 +19,7 @@ app.use(compression());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.json("success");
+  res.json("test test test");
 });
 
 app.listen(PORT, async () => {

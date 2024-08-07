@@ -43,6 +43,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -69,7 +74,19 @@ jobs:
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
           DB_COLLECTION: ${{ secrets.DB_COLLECTION }}
 
+      - name: Log in to Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Tag and push Docker image
         run: |
           docker tag carspecsfinderai-api_app:latest ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
+
+      - name: Update Azure Container App
+        run: |
+          az containerapp update \
+            --resource-group CarSpecsFinder \
+            --name api-dockerhub \
+            --image ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
