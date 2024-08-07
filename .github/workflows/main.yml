@@ -89,4 +89,4 @@ jobs:
           az webapp config container set \
             --resource-group CarSpecsFinder \
             --name api-dockerhub \
-            --docker-custom-image-name ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
+            --container-image-name ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
