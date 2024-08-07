@@ -86,7 +86,7 @@ jobs:
 
       - name: Update Azure App Service with new image
         run: |
-          az webapp config container set \
+          az containerapp config container set \
             --resource-group CarSpecsFinder \
             --name api-dockerhub \
             --container-image-name ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
