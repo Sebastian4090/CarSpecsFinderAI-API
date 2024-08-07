@@ -89,4 +89,4 @@ jobs:
           az containerapp update \
             --resource-group CarSpecsFinder \
             --name api-dockerhub \
-            --container-image-name ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
+            --image ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
