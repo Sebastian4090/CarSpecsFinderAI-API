@@ -7,7 +7,7 @@
 ## Developed using:<br>
 [![List](https://skillicons.dev/icons?i=nodejs,express,ts,mongodb,docker,jest,)](https://skillicons.dev)<br><br>
 ## Also uses:
-[Github Actions for CI](https://github.com/features/actions)<br>
+[Github Actions for CI/CD](https://github.com/features/actions)<br>
 [DockerHub For Storing Container Image](https://hub.docker.com/repository/docker/sebastian4090/carspecsfinderai-api/general)<br>
 [Deployed On Azure Cloud](https://azure.microsoft.com/)
 <br>
