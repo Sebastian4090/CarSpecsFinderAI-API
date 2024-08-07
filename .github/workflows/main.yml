@@ -73,3 +73,15 @@ jobs:
         run: |
           docker tag carspecsfinderai-api_app:latest ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
+
+      - name: Log in to Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Azure App Service with new image
+        run: |
+          az webapp config container set \
+            --resource-group CarSpecsFinder \
+            --name api-dockerhub \
+            --docker-custom-image-name ${{ secrets.DOCKER_USERNAME }}/carspecsfinderai-api:latest
